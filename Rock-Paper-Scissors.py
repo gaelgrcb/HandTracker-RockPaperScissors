@@ -2,13 +2,22 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
+#Video Capture
 camera = cv2.VideoCapture(0)
-mpHands = mp.solutions.hands
 
-hands = mpHands.Hands(static_image_mode= False,
-                        min_detection_confidence= 0.9,
-                        min_tracking_confidence= 0.8)
+#Init MP and CV
+mpHands = mp.solutions.hands
 mpDraw = mp.solutions.drawing_utils
+
+#hands = mpHands.Hands(static_image_mode= False,
+#                        min_detection_confidence= 0.9,
+#                        min_tracking_confidence= 0.8)
+
+#Function to detect hand gestures
+def gestures(hand_landmarks):
+    #We define the landmark of index and middle finger
+    index_tip = hand_landmarks.landmark[8]
+    middle_tip = hand_landmarks.landmark[12]
 
 while True:
     success,img = camera.read()
