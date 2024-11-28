@@ -5,7 +5,7 @@ import random
 
 #Init MP and CV
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands()
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.8, min_tracking_confidence=0.8)
 mp_drawing = mp.solutions.drawing_utils
 
 #hands = mpHands.Hands(static_image_mode= False,
@@ -19,43 +19,54 @@ def gestures(hand_landmarks):
     middle_tip = hand_landmarks.landmark[12]
 
     #Calculate the distance between finger an middle finger
-    distance = ((index_tip - middle_tip) ** 2 + (index_tip.y - middle_tip.y) ** 2) * 0.5
+    distance = ((index_tip.x - middle_tip.x) ** 2 + (index_tip.y - middle_tip.y) ** 2) * 0.5
 
     if distance < 0.05:
         return "Tijera"
-    elif index_tip < middle_tip.y:
+    elif index_tip.y < middle_tip.y:
         return "Papel"
     else:
         return "Piedra"
 
 #Function to determinate the winner
-def winner(player_choice, computer_choice):
-    if player_choice == computer_choice:
+def winner(player_move, computer_move):
+    if player_move == computer_move:
         return "Empate"
     #Win combinations
-    elif (player_choice == "Piedra" and computer_choice == "Tijera") or (player_choice == "Tijera" and computer_choice == "Papel") or (player_choice == "Papel" and computer_choice == "Piedra"):
+    elif (player_move == "Piedra" and computer_move == "Tijera") or (player_move == "Tijera" and computer_move == "Papel") or (player_move == "Papel" and computer_move == "Piedra"):
         return "Ganaste"
     else:
         return "Perdiste"
 
-#Video Capture
-camera = cv2.VideoCapture(0)
-while True:
-    success,img = camera.read()
-
-    imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
+#Video Capture "UPDATED"
+cap = cv2.VideoCapture(0)
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        continue
+    imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     imgRGB = np.array(imgRGB, dtype=np.uint8)
-
     result = hands.process(imgRGB)
 
     if result.multi_hand_landmarks:
-        for handLm in result.multi_hand_landmarks:
-            mp_drawing.draw_landmarks(img, handLm, mp_hands.HAND_CONNECTIONS)
+        for landamark in result.multi_hand_landmarks:
+            mp_drawing.draw_landmarks(frame, landamark, mp_hands.HAND_CONNECTIONS)
+            my_move = gestures(landamark)
+            #Show my gesture in screen
+            cv2.putText(frame, f"Jugador: {my_move}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0),2)
 
-    cv2.imshow("Hand Tracker", img)
+            #Computer random move
+            computer_move = random.choice(["Piedra", "Papel", "Tijera"])
+            cv2.putText(frame, f"Computadora: {computer_move}", (10,70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),2)
+
+            #compare moves
+            result_text = winner(my_move, computer_move)
+            cv2.putText(frame,f"Resultado: {result_text}", (10,110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,0), 2)
+
+    cv2.imshow("Piedra, Papel o Tijera", frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-camera.release()
+
+cap.release()
 cv2.destroyAllWindows()
