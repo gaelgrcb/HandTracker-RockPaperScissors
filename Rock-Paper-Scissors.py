@@ -117,7 +117,7 @@ while cap.isOpened():
         else:
             if result.multi_hand_landmarks:
                 for handLm in result.multi_hand_landmarks:
-                    mp_drawing.draw_landmarks(frame, handLm, mp_hands.HAND_CONNECTIONS)
+                    #mp_drawing.draw_landmarks(frame, handLm, mp_hands.HAND_CONNECTIONS)
                     player_move = gestures(handLm)
 
             computer_move = random.choice(["Piedra", "Papel", "Tijera"])
