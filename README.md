@@ -28,7 +28,7 @@ This interactive game lets you play against the computer, which randomly selects
 1. Clone this repository:
     ```bash
     git clone https://github.com/tu_usuario/tu_repositorio.git
-    cd tu_repositorio
+    cd yo
     ```
 2. Install the required dependencies:
     ```bash
@@ -36,7 +36,7 @@ This interactive game lets you play against the computer, which randomly selects
     ```
 3. Run the game:
     ```bash
-    python game.py
+    python Rock-Paper.Scissors.py
     ```
 
 ## Requirements
