@@ -44,8 +44,13 @@ last_result_time = None
 game_result = ""
 my_move = ""
 computer_move = ""
-round_active= True
+
+#Texts to start the round
 countdown_texts = ["Listo?","Piedra","Papel","Tijera","YA"]
+
+#Game states
+waiting_for_space = True
+round_active= False
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -59,9 +64,17 @@ while cap.isOpened():
 
     current_time = time.time()
 
-    if round_active:
+    if waiting_for_space:
+        cv2.putText(frame, "Presione SPACEBAR", (200,250), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+
+        if cv2.waitKey(1) & 0xFF == ord(' '):
+            waiting_for_space = False
+            round_active = True
+            last_game_time = current_time
+
+    elif round_active:
         elapsed_time = current_time - last_game_time
-        if elapsed_time <= 4:
+        if elapsed_time <= 5:
             if elapsed_time < 4:
                 countdown_index = int(elapsed_time)
                 countdown_message = countdown_texts[countdown_index]
@@ -80,20 +93,23 @@ while cap.isOpened():
             round_active = False
             last_result_time = current_time
     else:
+            # Show results
         if current_time - last_result_time <= 3:
-            cv2.putText(frame, f"Jugador: {my_move if my_move else 'Descalificado'}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(frame, f"Computadora: {computer_move}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.putText(frame, f"Resultado: {game_result}", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+            cv2.putText(frame, f"Jugador: {my_move if my_move else 'NO JUGO'}", (10, 30),
+            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(frame, f"Computadora: {computer_move}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255),2)
+            cv2.putText(frame, f"Resultado: {game_result}", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0),2)
         else:
+            # restart game
             my_move = ""
             computer_move = ""
             game_result = ""
-            last_game_time = current_time
-            round_active = True
+            waiting_for_space = True
+            round_active = False
 
     cv2.imshow("Piedra, Papel o Tijera", frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(2) & 0xFF == ord('q'):
         break
 
 cap.release()
