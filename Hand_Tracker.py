@@ -20,6 +20,7 @@ while cap.isOpened():
 
     frame = cv2.flip(frame, 1)
     imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    imgRGB = np.array(imgRGB, dtype=np.uint8)
     result = hands.process(imgRGB)
 
     if result.multi_hand_landmarks:
