@@ -45,7 +45,7 @@ game_result = ""
 my_move = ""
 computer_move = ""
 round_active= True
-
+countdown_texts = ["Listo?","Piedra","Papel","Tijera","YA"]
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -60,17 +60,22 @@ while cap.isOpened():
     current_time = time.time()
 
     if round_active:
-        # Countdown timer for the player
-        timer = max(0, 3 - int(current_time - last_game_time))
-        cv2.putText(frame, f"Prepárate: {timer}", (200, 250), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 255), 3)
+        elapsed_time = int(current_time - last_game_time)
+        countdown_index = min(elapsed_time, len(countdown_texts) - 1)
+        countdown_message = countdown_texts[countdown_index]
 
-        if result.multi_hand_landmarks:
-            for handLm in result.multi_hand_landmarks:
-                mp_drawing.draw_landmarks(frame, handLm, mp_hands.HAND_CONNECTIONS)
-                my_move = gestures(handLm)
+        text_size = cv2.getTextSize(countdown_message, cv2.FONT_HERSHEY_SIMPLEX, 2, 3)[0]
+        text_x = (frame.shape[1] - text_size[0]) // 2
+        text_y = (frame.shape[0] + text_size[1]) // 2
 
-        if timer == 0:
-            # Computer makes its move
+        cv2.putText(frame, countdown_message, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 255), 3)
+
+        if countdown_index == 4:  # After "¡YA!", process moves
+            if result.multi_hand_landmarks:
+                for handLm in result.multi_hand_landmarks:
+                    mp_drawing.draw_landmarks(frame, handLm, mp_hands.HAND_CONNECTIONS)
+                    my_move = gestures(handLm)
+
             computer_move = random.choice(["Piedra", "Papel", "Tijera"])
             game_result = winner(my_move, computer_move)
             round_active = False
@@ -84,12 +89,11 @@ while cap.isOpened():
             last_game_time = current_time
             round_active = True
 
-    #Show my gesture in screen
-    cv2.putText(frame, f"Jugador: {my_move if my_move else 'Indefinido'}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0),2)
-    #Computer random move
-    cv2.putText(frame, f"Computadora: {computer_move}", (10,70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),2)
-    #compare moves
-    cv2.putText(frame,f"Resultado: {game_result}", (10,110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,0), 2)
+    # Display information
+    cv2.putText(frame, f"Jugador: {my_move if my_move else 'Esperando...'}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                (0, 255, 0), 2)
+    cv2.putText(frame, f"Computadora: {computer_move}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    cv2.putText(frame, f"Resultado: {game_result}", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
     cv2.imshow("Piedra, Papel o Tijera", frame)
 
