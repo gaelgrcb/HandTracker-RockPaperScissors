@@ -1,4 +1,4 @@
-# Rock-Paper-Scissors Hand Tracker
+# Rock-Paper-Scissors Hand Tracker Game
 
 A **rock-paper-scissors game** powered by OpenCV, utilizing **hand gesture recognition** to detect and interpret your hand movements.  
 This interactive game lets you play against the computer, which randomly selects its moves. The system employs **real-time hand tracking** for a smooth and immersive experience.
