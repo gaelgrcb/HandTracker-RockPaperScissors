@@ -9,6 +9,21 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.8, min_tracking_confidence=0.8)
 mp_drawing = mp.solutions.drawing_utils
 
+#Function to draw texts
+def draw_centered_text(frame, text, font, font_scale, thickness, color, shadow_color=None, y_offset=0):
+    window_height, window_width, _ = frame.shape
+
+    text_size, _ = cv2.getTextSize(text, font, font_scale, thickness)
+    text_width, text_height = text_size
+
+    x = (window_width - text_width) // 2
+    y = (window_height + text_height) // 2 + y_offset
+
+    if shadow_color:
+        cv2.putText(frame, text, (x + 2, y + 2), font, font_scale, shadow_color, thickness + 2, lineType=cv2.LINE_AA)
+
+    cv2.putText(frame, text, (x, y), font, font_scale, color, thickness, lineType=cv2.LINE_AA)
+
 #Function to detect hand gestures
 def gestures(hand_landmarks):
     fingers = []
@@ -65,13 +80,21 @@ while cap.isOpened():
     current_time = time.time()
 
     if waiting_for_space:
-        cv2.putText(frame, "Presione SPACEBAR", (200,250), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+        draw_centered_text(
+            frame,
+            "Presiona SPACEBAR",
+            font=cv2.FONT_HERSHEY_SIMPLEX,
+            font_scale=1,
+            thickness=2,
+            color=(0, 255, 255),
+            shadow_color=(0, 0, 0),
+            y_offset=0
+        )
 
         if cv2.waitKey(1) & 0xFF == ord(' '):
             waiting_for_space = False
             round_active = True
             last_game_time = current_time
-
     elif round_active:
         elapsed_time = current_time - last_game_time
         if elapsed_time <= 5:
@@ -81,7 +104,16 @@ while cap.isOpened():
             else:
                 countdown_message = countdown_texts[-1]
 
-            cv2.putText(frame, countdown_message, (200, 250), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 255), 3)
+            draw_centered_text(
+                frame,
+                countdown_message,
+                font=cv2.FONT_HERSHEY_SIMPLEX,
+                font_scale=2,
+                thickness=4,
+                color=(0, 255, 255),
+                shadow_color=(0, 0, 0),
+                y_offset=0
+            )
         else:
             if result.multi_hand_landmarks:
                 for handLm in result.multi_hand_landmarks:
@@ -93,14 +125,12 @@ while cap.isOpened():
             round_active = False
             last_result_time = current_time
     else:
-            # Show results
+
         if current_time - last_result_time <= 3:
-            cv2.putText(frame, f"Jugador: {my_move if my_move else 'NO JUGO'}", (10, 30),
-            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            cv2.putText(frame, f"Computadora: {computer_move}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255),2)
-            cv2.putText(frame, f"Resultado: {game_result}", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0),2)
+            draw_centered_text(frame, f"Jugador: {my_move if my_move else 'NO JUGO'}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 255, 0), (0, 0, 0), -100)
+            draw_centered_text(frame, f"Computadora: {computer_move}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 0, 255), (0, 0, 0), -50)
+            draw_centered_text(frame, f"Resultado: {game_result}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (255, 255, 0), (0, 0, 0), 0)
         else:
-            # restart game
             my_move = ""
             computer_move = ""
             game_result = ""
@@ -109,7 +139,7 @@ while cap.isOpened():
 
     cv2.imshow("Piedra, Papel o Tijera", frame)
 
-    if cv2.waitKey(2) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
