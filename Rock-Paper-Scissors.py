@@ -57,7 +57,7 @@ cap = cv2.VideoCapture(0)
 last_game_time = time.time()
 last_result_time = None
 game_result = ""
-my_move = ""
+player_move = ""
 computer_move = ""
 
 #Texts to start the round
@@ -118,20 +118,20 @@ while cap.isOpened():
             if result.multi_hand_landmarks:
                 for handLm in result.multi_hand_landmarks:
                     mp_drawing.draw_landmarks(frame, handLm, mp_hands.HAND_CONNECTIONS)
-                    my_move = gestures(handLm)
+                    player_move = gestures(handLm)
 
             computer_move = random.choice(["Piedra", "Papel", "Tijera"])
-            game_result = winner(my_move, computer_move)
+            game_result = winner(player_move, computer_move)
             round_active = False
             last_result_time = current_time
     else:
 
         if current_time - last_result_time <= 3:
-            draw_centered_text(frame, f"Jugador: {my_move if my_move else 'NO JUGO'}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 255, 0), (0, 0, 0), -100)
+            draw_centered_text(frame, f"Jugador: {player_move if player_move else 'NO JUGO'}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 255, 0), (0, 0, 0), -100)
             draw_centered_text(frame, f"Computadora: {computer_move}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 0, 255), (0, 0, 0), -50)
             draw_centered_text(frame, f"Resultado: {game_result}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (255, 255, 0), (0, 0, 0), 0)
         else:
-            my_move = ""
+            player_move = ""
             computer_move = ""
             game_result = ""
             waiting_for_space = True
