@@ -60,17 +60,16 @@ while cap.isOpened():
     current_time = time.time()
 
     if round_active:
-        elapsed_time = int(current_time - last_game_time)
-        countdown_index = min(elapsed_time, len(countdown_texts) - 1)
-        countdown_message = countdown_texts[countdown_index]
+        elapsed_time = current_time - last_game_time
+        if elapsed_time <= 4:
+            if elapsed_time < 4:
+                countdown_index = int(elapsed_time)
+                countdown_message = countdown_texts[countdown_index]
+            else:
+                countdown_message = countdown_texts[-1]
 
-        text_size = cv2.getTextSize(countdown_message, cv2.FONT_HERSHEY_SIMPLEX, 2, 3)[0]
-        text_x = (frame.shape[1] - text_size[0]) // 2
-        text_y = (frame.shape[0] + text_size[1]) // 2
-
-        cv2.putText(frame, countdown_message, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 255), 3)
-
-        if countdown_index == 4:  # After "¡YA!", process moves
+            cv2.putText(frame, countdown_message, (200, 250), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 255), 3)
+        else:
             if result.multi_hand_landmarks:
                 for handLm in result.multi_hand_landmarks:
                     mp_drawing.draw_landmarks(frame, handLm, mp_hands.HAND_CONNECTIONS)
@@ -81,19 +80,16 @@ while cap.isOpened():
             round_active = False
             last_result_time = current_time
     else:
-        # Display results for 3 seconds
-        if current_time - last_result_time > 3:
+        if current_time - last_result_time <= 3:
+            cv2.putText(frame, f"Jugador: {my_move if my_move else 'Descalificado'}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(frame, f"Computadora: {computer_move}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(frame, f"Resultado: {game_result}", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+        else:
             my_move = ""
             computer_move = ""
             game_result = ""
             last_game_time = current_time
             round_active = True
-
-    # Display information
-    cv2.putText(frame, f"Jugador: {my_move if my_move else 'Esperando...'}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 255, 0), 2)
-    cv2.putText(frame, f"Computadora: {computer_move}", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-    cv2.putText(frame, f"Resultado: {game_result}", (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
     cv2.imshow("Piedra, Papel o Tijera", frame)
 
