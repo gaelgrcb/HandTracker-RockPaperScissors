@@ -36,7 +36,7 @@ This interactive game lets you play against the computer, which randomly selects
     ```
 3. Run the game:
     ```bash
-    python Rock-Paper.Scissors.py
+    python Rock-Paper-Scissors.py
     ```
 
 ## Requirements
