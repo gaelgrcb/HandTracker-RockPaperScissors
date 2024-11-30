@@ -97,12 +97,9 @@ while cap.isOpened():
             last_game_time = current_time
     elif round_active:
         elapsed_time = current_time - last_game_time
-        if elapsed_time <= 5:
-            if elapsed_time < 4:
-                countdown_index = int(elapsed_time)
-                countdown_message = countdown_texts[countdown_index]
-            else:
-                countdown_message = countdown_texts[-1]
+        if elapsed_time <= 2.5:
+            countdown_index = int(elapsed_time // 0.5)
+            countdown_message = countdown_texts[countdown_index]
 
             draw_centered_text(
                 frame,
@@ -117,7 +114,6 @@ while cap.isOpened():
         else:
             if result.multi_hand_landmarks:
                 for handLm in result.multi_hand_landmarks:
-                    #mp_drawing.draw_landmarks(frame, handLm, mp_hands.HAND_CONNECTIONS)
                     player_move = gestures(handLm)
 
             computer_move = random.choice(["Piedra", "Papel", "Tijera"])
@@ -125,11 +121,10 @@ while cap.isOpened():
             round_active = False
             last_result_time = current_time
     else:
-
         if current_time - last_result_time <= 3:
-            draw_centered_text(frame, f"Jugador: {player_move if player_move else 'NO JUGO'}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 255, 0), (0, 0, 0), -100)
+            draw_centered_text(frame, f"Jugador: {player_move if player_move else 'NO PARTICIPO'}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 255, 0), (0, 0, 0), -100)
             draw_centered_text(frame, f"Computadora: {computer_move}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 0, 255), (0, 0, 0), -50)
-            draw_centered_text(frame, f"Resultado: {game_result}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (255, 255, 0), (0, 0, 0), 0)
+            draw_centered_text(frame, f"{game_result}", cv2.FONT_HERSHEY_SIMPLEX, 2, 2, (0, 255, 255), (0, 0, 0), 0)
         else:
             player_move = ""
             computer_move = ""
