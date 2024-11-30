@@ -20,6 +20,7 @@ while cap.isOpened():
 
     frame = cv2.flip(frame, 1)
     imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    # Some devices can generate conflict this line, I use linux and I need it if it causes error try removing this line
     imgRGB = np.array(imgRGB, dtype=np.uint8)
     result = hands.process(imgRGB)
 
@@ -29,8 +30,8 @@ while cap.isOpened():
                 frame,
                 hand_landmarks,
                 mp_hands.HAND_CONNECTIONS,
-                mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=4),  # Rojo para los puntos
-                mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=2)  # Azul para las líneas
+                mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=4),
+                mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=2)
             )
 
     cv2.imshow("Hand Tracker", frame)
