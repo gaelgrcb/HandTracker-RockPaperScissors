@@ -28,7 +28,7 @@ This interactive game lets you play against the computer, which randomly selects
 1. Clone this repository:
     ```bash
     git clone https://github.com/gaelgrcb/HandTracker-RockPaperScissors.git
-    cd 
+    cd HandTracker-RockPaperScissors
     ```
 2. Install the required dependencies:
     ```bash
