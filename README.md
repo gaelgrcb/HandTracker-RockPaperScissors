@@ -28,7 +28,7 @@ This interactive game lets you play against the computer, which randomly selects
 1. Clone this repository:
     ```bash
     git clone https://github.com/tu_usuario/tu_repositorio.git
-    cd yo
+    cd (your_project)
     ```
 2. Install the required dependencies:
     ```bash
