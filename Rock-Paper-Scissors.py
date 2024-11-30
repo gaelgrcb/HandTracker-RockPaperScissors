@@ -122,7 +122,7 @@ while cap.isOpened():
             last_result_time = current_time
     else:
         if current_time - last_result_time <= 3:
-            draw_centered_text(frame, f"Jugador: {player_move if player_move else 'UNDEFINED'}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 255, 0), (0, 0, 0), -100)
+            draw_centered_text(frame, f"Jugador: {player_move if player_move else 'NO PARTICIPO'}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 255, 0), (0, 0, 0), -100)
             draw_centered_text(frame, f"Computadora: {computer_move}", cv2.FONT_HERSHEY_SIMPLEX, 1, 2, (0, 0, 255), (0, 0, 0), -50)
             draw_centered_text(frame, f"{game_result}", cv2.FONT_HERSHEY_SIMPLEX, 2, 2, (0, 255, 255), (0, 0, 0), 0)
         else:
